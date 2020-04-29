@@ -1,6 +1,6 @@
 import * as CartAction from "../../../../Actions/CartAction";
 import { bindActionCreators } from "redux";
-import * as types from '../../../../constants/ActionTypes';
+import * as types from "../../../../constants/ActionTypes";
 
 import React, { Component } from "react";
 import { FlatList } from "react-native";
@@ -13,6 +13,7 @@ import {
   Dimensions,
   StyleSheet,
   Image,
+  TextInput,
 } from "react-native";
 
 const url = "http://vaomua.club/ungdung/images/product/";
@@ -27,6 +28,27 @@ function toTitleCase(str) {
 }
 
 class CartView extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { quantity: 1 };
+  }
+
+  decreaseQuantity = () => {
+    if (this.state.quantity <= 1) {
+      return;
+    } else {
+      this.setState({
+        quantity: this.state.quantity - 1,
+      });
+    }
+  };
+
+  increaseQuantitiy = () => {
+    this.setState({
+      quantity: this.state.quantity - 1 + 2,
+    });
+  };
+
   componentDidMount() {
     this.props.getCart();
   }
@@ -37,7 +59,7 @@ class CartView extends Component {
   }
 
   render() {
-    const {navigation} =this.props
+    const { navigation } = this.props;
     var { cart } = this.props;
     console.log("render cart abc", cart);
 
@@ -58,10 +80,10 @@ class CartView extends Component {
     } = styles;
     return (
       <View style={wrapper}>
-          {/* <Image
-                source={{ uri: 'http://vaomua.club/ungdung/images/product/58.jpeg' }}
-                style={productImage}
-              />  */}
+        <Image
+          source={{ uri: "http://vaomua.club/ungdung/images/product/58.jpeg" }}
+          style={productImage}
+        />
         <FlatList
           data={cart}
           renderItem={({ item }) => (
@@ -87,11 +109,16 @@ class CartView extends Component {
                 </View>
                 <View style={productController}>
                   <View style={numberOfProduct}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={this.increaseQuantitiy}>
                       <Text>+</Text>
                     </TouchableOpacity>
-                    <Text>{3}</Text>
-                    <TouchableOpacity>
+                    <TextInput
+                      style={styles.input}
+                      onChangeText={(quantity) => this.setState({ quantity })}
+                      value={`${this.state.quantity}`}
+                      keyboardType="numeric"
+                    />
+                    <TouchableOpacity onPress={this.decreaseQuantity}>
                       <Text>-</Text>
                     </TouchableOpacity>
                   </View>
@@ -99,7 +126,7 @@ class CartView extends Component {
                     style={showDetailContainer}
                     onPress={() => {
                       navigation.navigate("ProductDetail", {
-                        product: item
+                        product: item,
                         // Lay du lieu array gui qua product
                       });
                     }}
@@ -113,39 +140,6 @@ class CartView extends Component {
           keyExtractor={(item) => item.id}
         />
 
-        {/* <ScrollView style={main}>
-                    
-                        { cart.map(e =>{
-                            <View style={product}>
-                               <Image source={{ uri: `${url}${e.images[0]}` }} style={productImage} />
-                               <View style={[mainRight]}>
-                                   <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
-                                       <Text style={txtName}>{e.name}</Text>
-                                       <TouchableOpacity>
-                                           <Text style={{  color: '#969696' }}>X</Text>
-                                       </TouchableOpacity>
-                                   </View>
-                                   <View>
-                                       <Text style={txtPrice}>{100}$</Text>
-                                   </View>
-                                   <View style={productController}>
-                                       <View style={numberOfProduct}>
-                                           <TouchableOpacity>
-                                               <Text>+</Text>
-                                           </TouchableOpacity>
-                                           <Text>{3}</Text>
-                                           <TouchableOpacity>
-                                               <Text>-</Text>
-                                           </TouchableOpacity>
-                                       </View>
-                                       <TouchableOpacity style={showDetailContainer}>
-                                           <Text style={txtShowDetail}>SHOW DETAILS</Text>
-                                       </TouchableOpacity>
-                                   </View>
-                               </View>
-                            </View>
-                        })}                                   
-                </ScrollView> */}
         <TouchableOpacity style={checkoutButton}>
           <Text style={checkoutTitle}>TOTAL {1000}$ CHECKOUT NOW</Text>
         </TouchableOpacity>
@@ -165,8 +159,9 @@ const mapDispatchToProps = (dispatch) => {
       dispatch({ type: types.GET_CART_SUCCESS });
     },
     deleteCart: () => {
-        dispatch({ type: types.REMOVE_FROM_CART_SUCCESS });
-    }  };
+      dispatch({ type: types.REMOVE_FROM_CART_SUCCESS });
+    },
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CartView);
@@ -250,6 +245,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
   },
+  input: {
+    height: 40,
+    width: 50,
+    borderWidth: 1,
+    borderColor: 'rgba(27,31,35,0.05)',
+    padding: 10,
+    backgroundColor: 'rgba(27,31,35,0.05)',
+    },
 });
 
 //   function mapDispatchToProps(dispatch) {

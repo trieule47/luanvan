@@ -9,6 +9,7 @@ export default function (state = InitialState.cart, action) {
 			console.log('ADD_TO_CART_SUCCESS state', state)
 			var exists = false;
 			const newState = state.map(item => {
+				console.log('add to card : ' + action.item)
 				if (item.id === action.item.id) {
 					exists = true;
 					return {
